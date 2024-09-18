@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app/cubits/get_weather_cubit/get_weather_cubit.dart';
-import 'package:weather_app/cubits/get_weather_cubit/get_weather_states.dart';
-import 'package:weather_app/views/search_view.dart';
-import 'package:weather_app/widgets/no_weather_body.dart';
-import 'package:weather_app/widgets/weather_info_body.dart';
+import 'package:weather_app/presentation/views/search_view.dart';
+import 'package:weather_app/presentation/widgets/no_weather_body.dart';
+import 'package:weather_app/presentation/widgets/weather_info_body.dart';
+
+import '../manager/get_weather_cubit/get_weather_cubit.dart';
+import '../manager/get_weather_cubit/get_weather_states.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -12,19 +13,19 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Weather App'),
+        title: const Text('Weather App'),
         actions: [
           IconButton(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) {
-                    return SearchView();
+                    return const SearchView();
                   },
                 ),
               );
             },
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
           ),
         ],
       ),
@@ -32,10 +33,12 @@ class HomeView extends StatelessWidget {
         builder: (context, state) {
           if (state is WeatherInitialState) {
             return const NoWeatherBody();
-          } else if (state is WeatherLoadedState) {
-            return WeatherInfoBody();
+          } else if (state is WeatherSuccessState) {
+            return const WeatherInfoBody();
+          } else if (state is WeatherloadingState) {
+            return const Center(child: CircularProgressIndicator());
           } else {
-            return const Text('Opps There was an error.......');
+            return const Center(child: Text('Opps There was an error'));
           }
         },
       ),
